@@ -1,0 +1,7 @@
+.venv/
+assets/
+renders/
+import/*
+!import/intake.json
+.env
+*.token

@@ -1,0 +1,26 @@
+{
+  "version": "0.1",
+  "rights": {
+    "local_adaptation": true,
+    "cloud_storage": false,
+    "video_service_upload": false,
+    "evidence": "Original geometric artwork created by pipeline.py"
+  },
+  "shots": [
+    {
+      "id": "S01",
+      "duration": 15,
+      "mode": "pan",
+      "source": "assets/page.png",
+      "review": "approved"
+    },
+    {
+      "id": "S02",
+      "duration": 15,
+      "mode": "layers",
+      "source": "assets/background.png",
+      "foreground": "assets/foreground.png",
+      "review": "approved"
+    }
+  ]
+}
