@@ -1,0 +1,37 @@
+name: Linux original-art demo
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: picturebook-original-demo
+  cancel-in-progress: false
+jobs:
+  render:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt
+      - name: Render original artwork only
+        run: python scripts/pipeline.py demo
+      - name: Save checkpoint
+        run: python scripts/checkpoint.py save checkpoint.zip
+      - name: Test fresh workspace recovery
+        run: |
+          mkdir -p /tmp/picturebook-restore/scripts
+          cp scripts/pipeline.py scripts/checkpoint.py /tmp/picturebook-restore/scripts/
+          python /tmp/picturebook-restore/scripts/checkpoint.py restore "$PWD/checkpoint.zip"
+          python /tmp/picturebook-restore/scripts/pipeline.py render
+          python -c "import imageio_ffmpeg,subprocess; subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(),'-v','error','-i','/tmp/picturebook-restore/renders/preview.mp4','-f','null','-'],check=True)"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: original-demo-checkpoint
+          path: |
+            checkpoint.zip
+            renders/preview.mp4
+          retention-days: 7
+          if-no-files-found: error
